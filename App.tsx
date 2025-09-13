@@ -68,9 +68,9 @@ function App() {
 
     } catch (e) {
         if (e instanceof Error) {
-            setError(`An error occurred: ${e.message}`);
+            setError(e.message);
         } else {
-            setError("An unknown error occurred.");
+            setError("An unknown error occurred. Please check the console for details.");
         }
         console.error(e);
     } finally {
