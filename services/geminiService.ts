@@ -127,7 +127,23 @@ export const compositeImages = async (foreground: ImageData, background: ImageDa
                     },
                 },
                 {
-                    text: 'Composite the first image (foreground subject) onto the second image (background). The subject should be centered and blended seamlessly into the background to create a realistic final image.',
+                    text: `You are a professional digital compositing AI. Your task is to combine two images: a foreground subject with a transparent background (layer 1) and a background image (layer 2).
+
+**Primary Directive:** The foreground subject (layer 1) is immutable and must be placed perfectly *on top* of the background (layer 2). The background must fill only the transparent areas around the subject.
+
+**CRITICAL RULE: NO OVERLAP.**
+*   The background image must **NEVER** cover, clip, obscure, or blend with any part of the foreground subject.
+*   The silhouette and all pixels of the foreground subject must remain 100% intact and visible.
+*   Treat the foreground as a locked top layer in an image editor. The background goes underneath and cannot affect the top layer.
+
+**Secondary Directive: Realistic Integration.**
+Once the layering is correct, make the composite photorealistic.
+*   **Lighting & Shadows:** Analyze the background's lighting. The subject must cast realistic shadows onto the background, and its own lighting should match the environment.
+*   **Scale & Perspective:** Adjust the subject's scale and position to fit the background's perspective perfectly.
+*   **Color Harmony:** Match the subject's color temperature, saturation, and grading to the background's atmosphere.
+*   **Edge Blending:** Subtly integrate the subject's edges with the background using techniques like light wrap, but without violating the "NO OVERLAP" rule.
+
+**Final Output:** A single, high-quality image where the foreground is perfectly placed on the background without any overlap, and the scene looks completely real.`,
                 },
             ],
         },
