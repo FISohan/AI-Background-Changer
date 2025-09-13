@@ -8,12 +8,16 @@ import { ART_STYLES } from './constants';
 import * as geminiService from './services/geminiService';
 import type { ArtStyle, ImageData, AspectRatio } from './types';
 import AspectRatioSelector from './components/AspectRatioSelector';
+import CustomSubjectInput from './components/CustomSubjectInput';
+import BatchSizeSelector from './components/BatchSizeSelector';
 
 function App() {
   const [originalImage, setOriginalImage] = useState<ImageData | null>(null);
   const [selectedStyle, setSelectedStyle] = useState<ArtStyle | null>(null);
+  const [customSubject, setCustomSubject] = useState('');
   const [selectedAspectRatio, setSelectedAspectRatio] = useState<AspectRatio>('16:9');
-  const [finalImage, setFinalImage] = useState<string | null>(null);
+  const [batchSize, setBatchSize] = useState(1);
+  const [finalImage, setFinalImage] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -50,13 +54,14 @@ function App() {
       setLoadingMessage("Removing background...");
       const foreground = await geminiService.removeBackground(originalImage);
 
-      setLoadingMessage("Generating new background...");
-      const background = await geminiService.generateBackground(selectedStyle.keywords, selectedAspectRatio);
+      setLoadingMessage(batchSize > 1 ? `Generating ${batchSize} backgrounds...` : "Generating new background...");
+      const backgrounds = await geminiService.generateBackground(selectedStyle.keywords, selectedAspectRatio, customSubject, batchSize);
       
       setLoadingMessage("Combining images...");
-      const final = await geminiService.compositeImages(foreground, background);
-      
-      setFinalImage(`data:${final.mimeType};base64,${final.base64}`);
+      const finalCompositePromises = backgrounds.map(bg => geminiService.compositeImages(foreground, bg));
+      const finalComposites = await Promise.all(finalCompositePromises);
+
+      setFinalImage(finalComposites.map(final => `data:${final.mimeType};base64,${final.base64}`));
 
     } catch (e) {
         if (e instanceof Error) {
@@ -79,6 +84,8 @@ function App() {
     setError(null);
     setLoadingMessage('');
     setSelectedAspectRatio('16:9');
+    setCustomSubject('');
+    setBatchSize(1);
   };
 
   const isGenerateDisabled = !originalImage || !selectedStyle || isLoading;
@@ -97,7 +104,7 @@ function App() {
 
         <main className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 space-y-8 flex flex-col items-center">
           {finalImage ? (
-            <ResultDisplay image={finalImage} onReset={handleReset} />
+            <ResultDisplay images={finalImage} onReset={handleReset} />
           ) : isLoading ? (
              <Loader message={loadingMessage} />
           ) : (
@@ -115,12 +122,25 @@ function App() {
                       onSelectRandom={handleSelectRandom}
                       disabled={isLoading}
                   />
+                  <CustomSubjectInput
+                    value={customSubject}
+                    onChange={setCustomSubject}
+                    disabled={isLoading}
+                  />
                   <AspectRatioSelector
                     selectedRatio={selectedAspectRatio}
                     onSelectRatio={handleSelectAspectRatio}
                     disabled={isLoading}
                   />
                 </div>
+              )}
+
+              {originalImage && (
+                  <BatchSizeSelector
+                    selectedSize={batchSize}
+                    onSelectSize={setBatchSize}
+                    disabled={isLoading}
+                  />
               )}
 
               <div className="pt-4 text-center">
@@ -131,7 +151,7 @@ function App() {
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 border border-transparent text-lg font-semibold rounded-full shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
                 >
                   <SparklesIcon className="w-6 h-6"/>
-                  Generate Your Image
+                  Generate Your Image{batchSize > 1 ? `s (${batchSize})` : ''}
                 </button>
               </div>
             </>

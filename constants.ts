@@ -105,5 +105,47 @@ export const ART_STYLES: ArtStyle[] = [
     description: 'Simplicity, clean lines, and a monochromatic palette.',
     keywords: 'A minimalist background with simple geometric shapes, clean lines, a neutral color palette, and plenty of negative space.',
     thumbnail: 'https://picsum.photos/seed/minimalism/400/300'
+  },
+  {
+    id: 'baroque',
+    name: 'Baroque',
+    description: 'Drama, rich color, and intense light and dark shadows.',
+    keywords: 'A dramatic Baroque style background with intense contrast between light and shadow (chiaroscuro), rich, deep colors, and ornate details, reminiscent of Caravaggio or Rembrandt.',
+    thumbnail: 'https://picsum.photos/seed/baroque/400/300'
+  },
+  {
+    id: 'rococo',
+    name: 'Rococo',
+    description: 'Light, elegant, and ornate, with pastel colors.',
+    keywords: 'An elegant and ornate Rococo style background with soft pastel colors, asymmetrical curves, and lighthearted, playful motifs, in the style of Fragonard.',
+    thumbnail: 'https://picsum.photos/seed/rococo/400/300'
+  },
+  {
+    id: 'geometric-abstraction',
+    name: 'Geometric Abstraction',
+    description: 'Art based on simple geometric shapes like lines and squares.',
+    keywords: 'A geometric abstraction background composed of clean lines, squares, and primary colors, in the style of Piet Mondrian\'s De Stijl movement.',
+    thumbnail: 'https://picsum.photos/seed/geometric-abstraction/400/300'
+  },
+  {
+    id: 'photorealism',
+    name: 'Photorealism',
+    description: 'Ultra-realistic imagery that resembles a high-resolution photo.',
+    keywords: 'An ultra-realistic, photorealistic background of a tranquil forest scene, with incredible detail, sharp focus, and accurate lighting, resembling a high-resolution photograph.',
+    thumbnail: 'https://picsum.photos/seed/photorealism/400/300'
+  },
+  {
+    id: 'vintage-photo',
+    name: 'Vintage Photo',
+    description: 'Simulates the look of old photographs, with sepia tones, grain, and slight imperfections.',
+    keywords: 'A vintage photograph background with sepia tones, grainy texture, and slight imperfections, like a retro, old-fashioned photo.',
+    thumbnail: 'https://picsum.photos/seed/vintage/400/300'
+  },
+  {
+    id: 'glitch-art',
+    name: 'Glitch Art',
+    description: 'Digital errors and artifacts for a distorted, futuristic look.',
+    keywords: 'A glitch art background featuring datamoshing, pixelation, and vibrant, distorted digital artifacts for a futuristic, abstract effect.',
+    thumbnail: 'https://picsum.photos/seed/glitch/400/300'
   }
 ];

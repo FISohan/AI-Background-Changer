@@ -18,7 +18,7 @@ interface AspectRatioSelectorProps {
 const AspectRatioSelector: React.FC<AspectRatioSelectorProps> = ({ selectedRatio, onSelectRatio, disabled }) => {
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">3. Choose Aspect Ratio</h2>
+      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">4. Choose Aspect Ratio</h2>
       <div className="flex flex-wrap items-center justify-center gap-3">
         {RATIOS.map(({ value, label }) => (
           <button

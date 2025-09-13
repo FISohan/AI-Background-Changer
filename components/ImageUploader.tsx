@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import UploadIcon from './icons/UploadIcon';
+import CameraIcon from './icons/CameraIcon';
+import WebcamCapture from './WebcamCapture';
 import type { ImageData } from '../types';
 
 interface ImageUploaderProps {
@@ -10,6 +12,7 @@ interface ImageUploaderProps {
 const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, disabled }) => {
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showWebcam, setShowWebcam] = useState(false);
 
   const handleFileChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -23,15 +26,28 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, disabled }
       setError(null);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result as string);
+        const result = reader.result as string;
+        setPreview(result);
         onImageUpload({
-          base64: (reader.result as string).split(',')[1],
+          base64: result.split(',')[1],
           mimeType: file.type,
         });
       };
       reader.readAsDataURL(file);
     }
   }, [onImageUpload]);
+  
+  const handleCapture = useCallback((imageData: ImageData) => {
+    const dataUrl = `data:${imageData.mimeType};base64,${imageData.base64}`;
+    setPreview(dataUrl);
+    onImageUpload(imageData);
+    setShowWebcam(false);
+    setError(null);
+  }, [onImageUpload]);
+
+  if (showWebcam) {
+    return <WebcamCapture onCapture={handleCapture} onClose={() => setShowWebcam(false)} />;
+  }
 
   return (
     <div className="w-full">
@@ -48,6 +64,22 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, disabled }
         <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="image/*" disabled={disabled} />
       </label>
       {error && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>}
+      
+      <div className="relative flex py-4 items-center">
+        <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+        <span className="flex-shrink mx-4 text-gray-500 dark:text-gray-400 text-sm">OR</span>
+        <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+      </div>
+      
+      <button
+        onClick={() => !disabled && setShowWebcam(true)}
+        disabled={disabled}
+        type="button"
+        className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md shadow-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        <CameraIcon className="w-5 h-5" />
+        Use Webcam
+      </button>
     </div>
   );
 };

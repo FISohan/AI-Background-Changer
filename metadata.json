@@ -1,5 +1,7 @@
 {
   "name": "AI Background Changer",
   "description": "Upload a photo, remove the original background, and replace it with a beautiful, AI-generated image in various artistic styles.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "camera"
+  ]
 }

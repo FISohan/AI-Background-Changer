@@ -39,7 +39,7 @@ export const removeBackground = async (image: ImageData): Promise<ImageData> => 
                     },
                 },
                 {
-                    text: 'Remove the background from this image. The output should be only the main subject with a transparent background.',
+                    text: 'Segment the primary subject from the background. The output must be an image of the subject with a transparent background.',
                 },
             ],
         },
@@ -55,25 +55,39 @@ export const removeBackground = async (image: ImageData): Promise<ImageData> => 
     return resultImage;
 };
 
-export const generateBackground = async (styleKeywords: string, aspectRatio: AspectRatio): Promise<ImageData> => {
+export const generateBackground = async (styleKeywords: string, aspectRatio: AspectRatio, customSubject: string, batchSize: number): Promise<ImageData[]> => {
+    let prompt;
+    if (customSubject) {
+      prompt = `A high-resolution background image of ${customSubject}. The style is: ${styleKeywords}.`;
+    } else {
+      prompt = `Generate a beautiful, high-resolution background image. Style: ${styleKeywords}.`;
+    }
+    prompt += ` The image should be a background and not contain any prominent foreground subjects, people, or animals unless explicitly requested.`;
+    
     const response = await ai.models.generateImages({
         model: 'imagen-4.0-generate-001',
-        prompt: `Generate a beautiful, high-resolution background image. Style: ${styleKeywords}. The image should be a background and not contain any prominent subjects, people, or animals.`,
+        prompt: prompt,
         config: {
-            numberOfImages: 1,
+            numberOfImages: batchSize,
             outputMimeType: 'image/jpeg',
             aspectRatio: aspectRatio,
         },
     });
 
-    const generatedImage = response.generatedImages?.[0]?.image;
-    if (!generatedImage || !generatedImage.imageBytes) {
-        throw new Error("Failed to generate background. The model did not return an image.");
+    const generatedImages = response.generatedImages;
+    if (!generatedImages || generatedImages.length === 0) {
+        throw new Error("Failed to generate background. The model did not return any images.");
     }
-    return {
-        base64: generatedImage.imageBytes,
-        mimeType: 'image/jpeg'
-    };
+    
+    return generatedImages.map(img => {
+        if (!img.image || !img.image.imageBytes) {
+            throw new Error("An image was generated but contained no data.");
+        }
+        return {
+            base64: img.image.imageBytes,
+            mimeType: 'image/jpeg'
+        };
+    });
 };
 
 export const compositeImages = async (foreground: ImageData, background: ImageData): Promise<ImageData> => {
@@ -94,7 +108,7 @@ export const compositeImages = async (foreground: ImageData, background: ImageDa
                     },
                 },
                 {
-                    text: 'Place the first image (the subject) onto the second image (the background). Center the subject and blend it naturally to create a composite image.',
+                    text: 'Composite the first image (foreground subject) onto the second image (background). The subject should be centered and blended seamlessly into the background to create a realistic final image.',
                 },
             ],
         },

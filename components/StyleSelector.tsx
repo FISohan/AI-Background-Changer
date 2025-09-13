@@ -9,55 +9,35 @@ interface StyleSelectorProps {
   disabled: boolean;
 }
 
-const StyleCard: React.FC<{
-  style: ArtStyle;
-  isSelected: boolean;
-  onClick: () => void;
-  disabled: boolean;
-}> = ({ style, isSelected, onClick, disabled }) => (
-  <div
-    onClick={!disabled ? onClick : undefined}
-    className={`group relative overflow-hidden rounded-lg shadow-md transition-all duration-300 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-xl hover:-translate-y-1'}`}
-  >
-    <img src={style.thumbnail} alt={style.name} className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-110" />
-    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-    <div className="absolute bottom-0 left-0 p-4">
-      <h3 className="font-bold text-white text-lg">{style.name}</h3>
-      <p className="text-gray-200 text-sm">{style.description}</p>
-    </div>
-    {isSelected && (
-      <div className="absolute inset-0 border-4 border-indigo-500 rounded-lg flex items-center justify-center bg-black/50">
-        <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-        </svg>
-      </div>
-    )}
-  </div>
-);
-
 const StyleSelector: React.FC<StyleSelectorProps> = ({ selectedStyle, onSelectStyle, onSelectRandom, disabled }) => {
   return (
     <div className="w-full">
       <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">2. Choose a Background Style</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="flex flex-wrap justify-center gap-2">
         {ART_STYLES.map(style => (
-          <StyleCard
+          <button
             key={style.id}
-            style={style}
-            isSelected={selectedStyle?.id === style.id}
-            onClick={() => onSelectStyle(style)}
+            onClick={() => !disabled && onSelectStyle(style)}
             disabled={disabled}
-          />
+            className={`px-3 py-2 text-sm font-medium rounded-full transition-colors duration-200
+              ${selectedStyle?.id === style.id
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'}
+              ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+            aria-pressed={selectedStyle?.id === style.id}
+          >
+            {style.name}
+          </button>
         ))}
-        <div
+        <button
           onClick={!disabled ? onSelectRandom : undefined}
-          className={`group flex flex-col items-center justify-center text-center bg-white dark:bg-gray-800 border-2 border-dashed rounded-lg shadow-md transition-all duration-300 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:shadow-xl hover:-translate-y-1 hover:border-indigo-500'}`}
+          disabled={disabled}
+          className={`px-3 py-2 text-sm font-medium rounded-full transition-colors duration-200
+            bg-white dark:bg-gray-800 border-2 border-dashed border-gray-400 dark:border-gray-500 text-gray-800 dark:text-gray-200 hover:border-indigo-500
+            ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
         >
-          <div className="p-4">
-            <h3 className="font-bold text-gray-800 dark:text-gray-200 text-lg">Random Style</h3>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Feeling lucky?</p>
-          </div>
-        </div>
+          Random ✨
+        </button>
       </div>
     </div>
   );
