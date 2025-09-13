@@ -10,6 +10,8 @@ import type { ArtStyle, ImageData, AspectRatio } from './types';
 import AspectRatioSelector from './components/AspectRatioSelector';
 import CustomSubjectInput from './components/CustomSubjectInput';
 import BatchSizeSelector from './components/BatchSizeSelector';
+import Modal from './components/Modal';
+import StyleGuide from './components/StyleGuide';
 
 function App() {
   const [originalImage, setOriginalImage] = useState<ImageData | null>(null);
@@ -21,6 +23,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isStyleGuideOpen, setIsStyleGuideOpen] = useState(false);
 
   const handleImageUpload = useCallback((imageData: ImageData) => {
     setOriginalImage(imageData);
@@ -31,7 +34,7 @@ function App() {
   const handleSelectStyle = useCallback((style: ArtStyle) => {
     setSelectedStyle(style);
   }, []);
-  
+
   const handleSelectAspectRatio = useCallback((ratio: AspectRatio) => {
     setSelectedAspectRatio(ratio);
   }, []);
@@ -86,6 +89,7 @@ function App() {
     setSelectedAspectRatio('16:9');
     setCustomSubject('');
     setBatchSize(1);
+    setIsStyleGuideOpen(false);
   };
 
   const isGenerateDisabled = !originalImage || !selectedStyle || isLoading;
@@ -116,6 +120,16 @@ function App() {
 
               {originalImage && (
                 <div className="w-full space-y-8">
+                  <div className="text-center">
+                      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">2. Choose an Artistic Style</h2>
+                      <button
+                          onClick={() => setIsStyleGuideOpen(true)}
+                          disabled={isLoading}
+                          className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md disabled:opacity-50"
+                      >
+                          What do these styles look like? View the Style Guide
+                      </button>
+                  </div>
                   <StyleSelector 
                       selectedStyle={selectedStyle} 
                       onSelectStyle={handleSelectStyle} 
@@ -132,15 +146,12 @@ function App() {
                     onSelectRatio={handleSelectAspectRatio}
                     disabled={isLoading}
                   />
-                </div>
-              )}
-
-              {originalImage && (
-                  <BatchSizeSelector
+                   <BatchSizeSelector
                     selectedSize={batchSize}
                     onSelectSize={setBatchSize}
                     disabled={isLoading}
                   />
+                </div>
               )}
 
               <div className="pt-4 text-center">
@@ -162,6 +173,13 @@ function App() {
             <p>Powered by Gemini API</p>
         </footer>
       </div>
+      <Modal 
+        isOpen={isStyleGuideOpen} 
+        onClose={() => setIsStyleGuideOpen(false)}
+        title="Image Style Guide"
+      >
+        <StyleGuide />
+      </Modal>
     </div>
   );
 }

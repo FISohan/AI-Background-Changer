@@ -56,14 +56,33 @@ export const removeBackground = async (image: ImageData): Promise<ImageData> => 
 };
 
 export const generateBackground = async (styleKeywords: string, aspectRatio: AspectRatio, customSubject: string, batchSize: number): Promise<ImageData[]> => {
-    let prompt;
-    if (customSubject) {
-      prompt = `A high-resolution background image of ${customSubject}. The style is: ${styleKeywords}.`;
+    let prompt: string;
+    const finalSubject = customSubject;
+
+    if (finalSubject) {
+        // This regex looks for a generic subject in the style prompt (e.g., "a serene landscape") and replaces it with the user's custom subject.
+        const subjectRegex = /( of a | of an | of )(.+?)( with |, in the style of |, featuring |, and |, composed of|\.)/;
+        
+        if (subjectRegex.test(styleKeywords)) {
+            // If a generic subject is found, replace it with the custom one for a more integrated prompt.
+            prompt = styleKeywords.replace(subjectRegex, `$1${finalSubject}$3`);
+        } else {
+            // Fallback for style prompts that don't have a clear replaceable subject.
+            // Appends the custom subject in a descriptive way.
+            const separator = styleKeywords.endsWith('.') ? '' : '.';
+            prompt = `${styleKeywords}${separator} The scene should feature ${finalSubject}.`;
+        }
     } else {
-      prompt = `Generate a beautiful, high-resolution background image. Style: ${styleKeywords}.`;
+      // If no custom subject is provided, use the style's default prompt.
+      prompt = styleKeywords;
     }
-    prompt += ` The image should be a background and not contain any prominent foreground subjects, people, or animals unless explicitly requested.`;
     
+    // If generating a batch, add an instruction to ensure diversity in the results.
+    if (batchSize > 1) {
+        const separator = prompt.endsWith('.') ? ' ' : '. ';
+        prompt += `${separator}Create significantly different versions of this scene, exploring variations in color, lighting, and composition.`;
+    }
+
     const response = await ai.models.generateImages({
         model: 'imagen-4.0-generate-001',
         prompt: prompt,

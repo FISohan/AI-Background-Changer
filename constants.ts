@@ -1,4 +1,4 @@
-import type { ArtStyle } from './types';
+import type { ArtStyle, BackgroundSubject } from './types';
 
 export const ART_STYLES: ArtStyle[] = [
   {
@@ -148,4 +148,48 @@ export const ART_STYLES: ArtStyle[] = [
     keywords: 'A glitch art background featuring datamoshing, pixelation, and vibrant, distorted digital artifacts for a futuristic, abstract effect.',
     thumbnail: 'https://picsum.photos/seed/glitch/400/300'
   }
+];
+
+// FIX: Add missing BACKGROUND_SUBJECTS constant to fix compilation error in an unused component.
+export const BACKGROUND_SUBJECTS: BackgroundSubject[] = [
+  {
+    id: 'beach',
+    name: 'Beach',
+    description: 'Serene beach at sunset.',
+  },
+  {
+    id: 'forest',
+    name: 'Forest',
+    description: 'Enchanted, glowing forest.',
+  },
+  {
+    id: 'mountains',
+    name: 'Mountains',
+    description: 'Misty mountains at dawn.',
+  },
+  {
+    id: 'cityscape',
+    name: 'Cityscape',
+    description: 'Vibrant cityscape at night.',
+  },
+  {
+    id: 'zen-garden',
+    name: 'Zen Garden',
+    description: 'Traditional Japanese garden.',
+  },
+  {
+    id: 'library',
+    name: 'Library',
+    description: 'Cozy, book-filled library.',
+  },
+  {
+    id: 'space',
+    name: 'Outer Space',
+    description: 'Galaxies and nebulae.',
+  },
+  {
+    id: 'abstract',
+    name: 'Abstract',
+    description: 'Soft, abstract gradient.',
+  },
 ];

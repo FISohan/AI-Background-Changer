@@ -12,7 +12,6 @@ interface StyleSelectorProps {
 const StyleSelector: React.FC<StyleSelectorProps> = ({ selectedStyle, onSelectStyle, onSelectRandom, disabled }) => {
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">2. Choose a Background Style</h2>
       <div className="flex flex-wrap justify-center gap-2">
         {ART_STYLES.map(style => (
           <button

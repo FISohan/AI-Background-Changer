@@ -6,6 +6,13 @@ export interface ArtStyle {
   thumbnail: string;
 }
 
+// FIX: Add missing BackgroundSubject type to fix compilation error in an unused component.
+export interface BackgroundSubject {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export interface ImageData {
   base64: string;
   mimeType: string;
